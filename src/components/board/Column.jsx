@@ -248,7 +248,7 @@ const CardsContainer = styled.div`
   gap: 4px;
 
   overflow-y: auto;
-  min-height: 100px;
+  min-height: 1vh;
   padding: 0 4px 0 0;
 
   &::-webkit-scrollbar {
