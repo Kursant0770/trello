@@ -12,7 +12,7 @@ export const AddCardForm = ({ onAdd, onClose }) => {
     if (text.trim()) {
       onAdd(text);
       setText("");
-      onClose(); // Закрываем форму после успешного добавления
+      onClose();
     }
   };
 

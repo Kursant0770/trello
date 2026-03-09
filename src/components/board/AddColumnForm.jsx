@@ -38,7 +38,7 @@ export const AddColumnForm = ({ setClose, onAdd }) => {
 };
 
 const FormWrapper = styled.form`
-  background-color: #101204; /* Темный фон под стать колонке */
+  background-color: #101204; 
   border-radius: 12px;
   width: 272px;
   padding: 12px;
