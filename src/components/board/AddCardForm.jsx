@@ -77,9 +77,10 @@ const StyledActionGroup = styled.div`
 const StyledAddButton = styled(Button)`
   background: #0c66e4;
   color: black;
+  font-size: 14px;
+  
   border: none;
   border-radius: 4px;
-  font-size: 14px;
   padding: 6px 12px;
   font-weight: 500;
 

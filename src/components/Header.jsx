@@ -27,9 +27,9 @@ const StyledHeader = styled.header`
   top: 0;
   z-index: 1000;
 
+  width: 100%;
   background: #1f1f21;
   color: white;
-  width: 100%;
   display: flex;
   justify-content: space-between;
   padding: 14px;

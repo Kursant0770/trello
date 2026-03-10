@@ -7,14 +7,7 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
-import {
-  IconButton,
-  Menu,
-  MenuItem,
-  Divider,
-  Typography,
-  Box,
-} from "@mui/material";
+import { IconButton, Menu, MenuItem, Box } from "@mui/material";
 
 export const Column = ({
   columnId,

@@ -23,21 +23,22 @@ export const NotFoundPage = () => {
 };
 
 const Container = styled.div`
+  height: 80vh;
+  color: #ff0000;
+  text-align: center;
+  padding: 20px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   
-  height: 80vh;
-  color: #ff0000;
-  text-align: center;
-  padding: 20px;
 `;
 
 const ErrorCode = styled.h1`
+  color: #e43c3c;
   font-size: 120px;
   margin: 0;
-  color: #e43c3c;
   text-shadow: 0px 4px 10px rgba(241, 102, 102, 0.58);
 `;
 
@@ -53,16 +54,18 @@ const Description = styled.p`
 `;
 
 const StyledButton = styled(Button)`
-  background: #4784df;
   padding: 12px 24px;
-  border-radius: 8px;
+  background: #4784df;
   font-weight: bold;
+  
   border: none;
+  border-radius: 8px;
   
   &:hover {
     background: #6499e9;
     transition: 0.3s;
   }
+  
   &:active {
     background: #4784df;
     transition: 0.3s;

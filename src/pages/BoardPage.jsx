@@ -217,7 +217,9 @@ export const BoardPage = () => {
 const StyledBoard = styled.div`
   min-height: 100vh;
   padding: 10vh 0 0 2vw;
+  
   color: white;
+  
   display: flex;
   gap: 20px;
 `;

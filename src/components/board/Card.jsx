@@ -140,18 +140,20 @@ const CardContent = styled.div`
 
 const CardText = styled.span`
   flex-grow: 1;
-  opacity: ${(props) => (props.$done ? 0.5 : 1)};
   transition: 0.2s;
+  text-decoration: ${({ $done }) => ($done ? "line-through" : "none")};
+  opacity: ${({ $done }) => ($done ? 0.5 : 1)};
 `;
 
 const DeleteIconButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 4px;
   color: #ef5350;
   border-radius: 4px;
   transition: 0.2s;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background: rgba(239, 83, 80, 0.2);
@@ -269,7 +271,6 @@ const DeleteText = styled.span`
 const CommentsList = styled.div`
   width: 100%;
   margin-top: 15px;
-
   max-height: 215px;
 
   overflow-y: auto;
@@ -294,13 +295,15 @@ const CommentsList = styled.div`
 const StyledButton = styled(Button)`
   padding: 8px 16px;
   margin-top: 10px;
-  border: none;
-  border-radius: 4px;
-
+  
   color: black;
   background: #2668ca;
   font-size: 14px;
   cursor: pointer;
+  
+  border: none;
+  border-radius: 4px;
+
 
   &:hover {
     background-color: #3b7ad9;

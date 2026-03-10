@@ -69,13 +69,14 @@ const ActionGroup = styled.div`
 `;
 
 const StyledAddButton = styled(Button)`
-  background: #0c66e4;
   color: black;
+  background: #0c66e4;
+  font-size: 14px;
+  font-weight: 500;
+  
   border: none;
   border-radius: 4px;
-  font-size: 14px;
   padding: 6px 12px;
-  font-weight: 500;
 
   &:hover {
     background-color: #0055cc;
@@ -87,11 +88,12 @@ const StyledAddButton = styled(Button)`
 `;
 
 const StyledBackButton = styled.button`
-  background: transparent;
-  border: none;
   color: #b6c2cf;
+  background: transparent;
   font-size: 24px;
   cursor: pointer;
+  
+  border: none;
   display: flex;
   align-items: center;
   transition: color 0.2s;
