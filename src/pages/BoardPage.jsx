@@ -14,7 +14,7 @@ export const BoardPage = () => {
     return saved
       ? JSON.parse(saved)
       : [
-          { id: "1", title: "Нужно сделать", cards: [], background: "#512020" },
+          { id: "1", title: "Нужно сделать", cards: [], background: "#521a1a" },
           { id: "2", title: "В процессе", cards: [], background: "#898921" },
           { id: "3", title: "Готово", cards: [], background: "#1d441d" },
         ];
@@ -30,120 +30,104 @@ export const BoardPage = () => {
     )
       return;
 
+    const newCols = [...columns];
+
     if (type === "column") {
-      const newCols = [...columns];
-      const [removedColumn] = newCols.splice(source.index, 1);
-      newCols.splice(destination.index, 0, removedColumn);
+      const [removed] = newCols.splice(source.index, 1);
+      newCols.splice(destination.index, 0, removed);
       setColumns(newCols);
       return;
     }
 
-    const sourceColIndex = columns.findIndex(
-      (col) => col.id.toString() === source.droppableId,
+    const sIdx = newCols.findIndex(
+      (c) => c.id.toString() === source.droppableId,
     );
-    const destColIndex = columns.findIndex(
-      (col) => col.id.toString() === destination.droppableId,
+    const dIdx = newCols.findIndex(
+      (c) => c.id.toString() === destination.droppableId,
     );
 
-    const sourceCol = columns[sourceColIndex];
-    const destCol = columns[destColIndex];
+    const sCards = [...newCols[sIdx].cards];
+    const dCards = sIdx === dIdx ? sCards : [...newCols[dIdx].cards];
 
-    const sourceCards = [...sourceCol.cards];
+    const [removedCard] = sCards.splice(source.index, 1);
+    dCards.splice(destination.index, 0, removedCard);
 
-    const destCards =
-      sourceColIndex === destColIndex ? sourceCards : [...destCol.cards];
-
-    const [removedCard] = sourceCards.splice(source.index, 1);
-    destCards.splice(destination.index, 0, removedCard);
-
-    const newCols = [...columns];
-    newCols[sourceColIndex] = { ...sourceCol, cards: sourceCards };
-
-    if (sourceColIndex !== destColIndex) {
-      newCols[destColIndex] = { ...destCol, cards: destCards };
-    }
+    newCols[sIdx] = { ...newCols[sIdx], cards: sCards };
+    if (sIdx !== dIdx) newCols[dIdx] = { ...newCols[dIdx], cards: dCards };
 
     setColumns(newCols);
   };
 
   const addColumn = (title) => {
-    setColumns([...columns, { id: crypto.randomUUID(), title, cards: [] }]);
+    setColumns([
+      ...columns,
+      { id: crypto.randomUUID(), title, cards: [], background: "#101204" },
+    ]);
     setOpenedFormId(null);
   };
 
-  const updateColumnTitle = (columnId, newTitle) => {
+  const updateColumnTitle = (id, title) => {
+    setColumns((prev) => prev.map((c) => (c.id === id ? { ...c, title } : c)));
+  };
+
+  const deleteColumn = (id) => {
+    if (window.confirm("Удалить эту колонку?")) {
+      setColumns((prev) => prev.filter((c) => c.id !== id));
+    }
+  };
+
+  const clearColumnTasks = (id) => {
+    if (window.confirm("Очистить все задачи?")) {
+      setColumns((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, cards: [] } : c)),
+      );
+    }
+  };
+
+  const updateColumnBackground = (id, background) => {
     setColumns((prev) =>
-      prev.map((col) =>
-        col.id === columnId ? { ...col, title: newTitle } : col,
+      prev.map((c) => (c.id === id ? { ...c, background } : c)),
+    );
+  };
+
+  const addCardToColumn = (id, text) => {
+    setColumns((prev) =>
+      prev.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              cards: [
+                ...(c.cards || []),
+                { id: crypto.randomUUID(), text, completed: false },
+              ],
+            }
+          : c,
       ),
     );
   };
 
-  const addCardToColumn = (columnId, text) => {
+  const updateCardData = (colId, cardId, updates) => {
     setColumns((prev) =>
       prev.map((col) =>
-        col.id === columnId
+        col.id === colId
           ? {
               ...col,
-              cards: [
-                ...(col.cards || []),
-                { id: crypto.randomUUID(), text, completed: false },
-              ],
+              cards: col.cards.map((c) =>
+                c.id === cardId ? { ...c, ...updates } : c,
+              ),
             }
           : col,
       ),
     );
   };
 
-  const deleteColumn = (columnId) => {
-    if (window.confirm("Удалить эту колонку и все её карточки?")) {
-      setColumns((prev) => prev.filter((col) => col.id !== columnId));
-    }
-  };
-
-  const clearColumnTasks = (columnId) => {
-    if (window.confirm("Очистить все задачи в этой колонке?")) {
-      setColumns((prev) =>
-        prev.map((col) => (col.id === columnId ? { ...col, cards: [] } : col)),
-      );
-    }
-  };
-
-  const updateColumnBackground = (columnId, color) => {
+  const deleteCard = (colId, cardId) => {
     setColumns((prev) =>
       prev.map((col) =>
-        col.id === columnId ? { ...col, background: color } : col,
+        col.id === colId
+          ? { ...col, cards: col.cards.filter((c) => c.id !== cardId) }
+          : col,
       ),
-    );
-  };
-
-  const updateCardData = (columnId, cardId, updates) => {
-    setColumns((prev) =>
-      prev.map((col) => {
-        if (col.id === columnId) {
-          return {
-            ...col,
-            cards: col.cards.map((card) =>
-              card.id === cardId ? { ...card, ...updates } : card,
-            ),
-          };
-        }
-        return col;
-      }),
-    );
-  };
-
-  const deleteCard = (columnId, cardId) => {
-    setColumns((prev) =>
-      prev.map((column) => {
-        if (column.id === columnId) {
-          return {
-            ...column,
-            cards: column.cards.filter((card) => card.id !== cardId),
-          };
-        }
-        return column;
-      }),
     );
   };
 
@@ -171,16 +155,14 @@ export const BoardPage = () => {
                   columnId={column.id}
                   title={column.title}
                   cards={column.cards || []}
+                  background={column.background}
                   onAddCard={(text) => addCardToColumn(column.id, text)}
-                  onUpdateTitle={(newTitle) =>
-                    updateColumnTitle(column.id, newTitle)
-                  }
+                  onUpdateTitle={(val) => updateColumnTitle(column.id, val)}
                   onUpdateCard={updateCardData}
                   onDeleteCard={deleteCard}
                   onDeleteColumn={deleteColumn}
                   onClearColumn={clearColumnTasks}
                   onUpdateBg={updateColumnBackground}
-                  background={column.background}
                   isFormOpen={openedFormId === column.id}
                   onOpen={(e) => {
                     e.stopPropagation();
@@ -189,6 +171,9 @@ export const BoardPage = () => {
                   onClose={() => setOpenedFormId(null)}
                 />
               ))}
+
+              {provided.placeholder}
+
               <FormSection onClick={(e) => e.stopPropagation()}>
                 {openedFormId === "new-column" ? (
                   <AddColumnForm

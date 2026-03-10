@@ -114,7 +114,7 @@ export const Column = ({
                 Удалить колонку
               </MenuItem>
               <Box sx={{ display: "flex", gap: 1, p: 1, flexWrap: "wrap" }}>
-                {["#101204", "#1f3e5c", "#646418", "#521a1a", "#1d441d"].map(
+                {["#101204", "#1f3e5c", "#898921", "#521a1a", "#1d441d"].map(
                   (color) => (
                     <Box
                       key={color}

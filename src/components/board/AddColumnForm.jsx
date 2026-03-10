@@ -38,10 +38,12 @@ export const AddColumnForm = ({ setClose, onAdd }) => {
 };
 
 const FormWrapper = styled.form`
-  background-color: #101204; 
-  border-radius: 12px;
   width: 272px;
   padding: 12px;
+
+  background-color: #101204; 
+  border-radius: 12px;
+  
   display: flex;
   flex-direction: column;
 `;
@@ -51,6 +53,7 @@ const StyledInput = styled(Input)`
   color: #ffffff;
   border: 1px solid #3e3f42;
   border-radius: 4px;
+  
   width: 100%;
   height: 36px;
   padding: 0 12px;

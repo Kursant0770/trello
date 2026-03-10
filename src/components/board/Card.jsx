@@ -131,11 +131,12 @@ export const Card = ({ card, columnId, onUpdateCard, index, onDeleteCard }) => {
 };
 
 const CardContent = styled.div`
+  width: 100%;
+  min-height: 30px;
+
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%;
-  min-height: 30px;
 `;
 
 const CardText = styled.span`
@@ -180,10 +181,11 @@ const StyledTitleInput = styled(Input)`
 `;
 
 const ModalContent = styled.div`
+  padding: 10px 20px;
+  
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 10px 20px;
 `;
 
 const TitleSection = styled.div`
