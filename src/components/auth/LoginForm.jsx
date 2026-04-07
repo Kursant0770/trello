@@ -20,13 +20,22 @@ export const LoginForm = () => {
 
   const submitHandle = (data) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
-    const user = users.find(
-      (user) => user.email === data.email && user.password === data.password,
-    );
 
-    if (user) {
+    const user = users.find((u) => u.email === data.email);
+
+    if (!user) {
+      alert(
+        "Пользователь с таким email не найден. Пожалуйста, зарегистрируйтесь.",
+      );
+      
+      return;
+    }
+
+    if (user.password === data.password) {
       localStorage.setItem("isAuth", "true");
+
       localStorage.setItem("currentUser", JSON.stringify(user));
+      
       navigate("/board");
     } else {
       alert("Неверный email или пароль");
