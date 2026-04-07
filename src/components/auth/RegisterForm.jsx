@@ -22,7 +22,7 @@ export const RegisterForm = () => {
   const password = watch("password");
 
   const submitHandle = (data) => {
-    const { confirmPassword, ...userData } = data;
+    const { confirmPassword: _confirmPassword, ...userData } = data;
     const users = JSON.parse(localStorage.getItem("users")) || [];
 
     if (users.some((user) => user.email === userData.email)) {
