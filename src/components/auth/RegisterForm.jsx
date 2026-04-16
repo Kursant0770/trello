@@ -1,6 +1,6 @@
 import { Typography, Box, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { InputMUI } from "../ui/Input";
 import icon from "../../assets/logo.png";
 import { useState } from "react";
@@ -15,11 +15,14 @@ export const RegisterForm = () => {
   const {
     handleSubmit,
     register,
-    watch,
+    control,
     formState: { errors },
   } = useForm();
 
-  const password = watch("password");
+  const password = useWatch({
+    control,
+    name: "password",
+  });
 
   const submitHandle = (data) => {
     const { confirmPassword: _confirmPassword, ...userData } = data;
