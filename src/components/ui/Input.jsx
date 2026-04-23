@@ -32,15 +32,11 @@ export const InputMUI = ({
 };
 
 export const Input = ({
-  label,
   type,
   name,
   register,
   rules,
-  error,
-  helperText,
   autoComplete,
-  endAdornment,
   ...rest
 }) => {
   return (

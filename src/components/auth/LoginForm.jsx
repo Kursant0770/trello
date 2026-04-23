@@ -1,5 +1,4 @@
-import { Typography, Box } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { styled, Typography, Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { InputMUI } from "../ui/Input";
 import { ButtonMUI } from "../ui/Button";

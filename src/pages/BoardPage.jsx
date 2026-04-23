@@ -24,6 +24,7 @@ export const BoardPage = () => {
     const { source, destination, type } = result;
 
     if (!destination) return;
+    
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
