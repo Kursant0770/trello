@@ -1,8 +1,18 @@
 import * as React from "react";
-import { Box, Avatar, Menu, MenuItem, ListItemIcon, Divider, IconButton, Tooltip } from "@mui/material";
-import {PersonAdd, Settings, Logout} from "@mui/icons-material";
+import {
+  Box,
+  Avatar,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Divider,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import { PersonAdd, Settings, Logout } from "@mui/icons-material";
 import { RxAvatar } from "react-icons/rx";
 import { NavLink, useNavigate } from "react-router-dom";
+import { logoutUser } from "../utils/auth";
 
 export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -21,11 +31,11 @@ export default function AccountMenu() {
   const handleLogOut = () => {
     handleClose();
 
-    localStorage.removeItem("isAuth");
-    localStorage.removeItem("currentUser");
+    logoutUser();
 
     navigate("/login");
   };
+
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>

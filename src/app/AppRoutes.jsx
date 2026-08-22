@@ -9,10 +9,10 @@ import { BoardPage } from "../pages/BoardPage";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { Layout } from "../layout/Layout";
 import { NotFoundPage } from "../pages/NotFoundPage";
+import { isAuthenticated } from "../utils/auth";
 
 const PublicRoute = ({ children }) => {
-  const isAuth = localStorage.getItem("isAuth") === "true";
-  return isAuth ? <Navigate to="/board" replace /> : children;
+  return isAuthenticated() ? <Navigate to="/board" replace /> : children;
 };
 
 const router = createBrowserRouter([
