@@ -6,7 +6,7 @@ import icon from "../../assets/logo.png";
 import { useState } from "react";
 import { BiHide, BiShow } from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
-import { hashPassword } from "../../utils/hashPassword";
+import { loginUser } from "../../utils/auth";
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -19,29 +19,14 @@ export const LoginForm = () => {
   } = useForm();
 
   const submitHandle = async (data) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const result = await loginUser(data.email, data.password);
 
-    const user = users.find((u) => u.email === data.email);
-
-    if (!user) {
-      alert(
-        "Пользователь с таким email не найден. Пожалуйста, зарегистрируйтесь.",
-      );
-      
+    if (!result.success) {
+      alert(result.message);
       return;
     }
 
-    const hashedPassword = await hashPassword(data.password);
-
-    if (user.password === hashedPassword) {
-      localStorage.setItem("isAuth", "true");
-
-      localStorage.setItem("currentUser", JSON.stringify(user));
-
-      navigate("/board");
-    } else {
-      alert("Неверный email или пароль");
-    }
+    navigate("/board");
   };
 
   return (
