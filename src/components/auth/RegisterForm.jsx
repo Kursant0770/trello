@@ -5,7 +5,8 @@ import icon from "../../assets/logo.png";
 import { useState } from "react";
 import { BiHide, BiShow } from "react-icons/bi";
 import { useNavigate, Link } from "react-router-dom";
-import { hashPassword } from "../../utils/hashPassword";
+import { registerUser } from "../../utils/auth";
+
 
 export const RegisterForm = () => {
   const navigate = useNavigate();
@@ -26,17 +27,12 @@ export const RegisterForm = () => {
   const submitHandle = async (data) => {
     const { confirmPassword: _confirmPassword, ...userData } = data;
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const result = await registerUser(userData);
 
-    if (users.some((user) => user.email === userData.email)) {
-      alert("Пользователь с таким email уже существует");
+    if (!result.success) {
+      alert(result.message);
       return;
     }
-
-    userData.password = await hashPassword(userData.password);
-
-    users.push(userData);
-    localStorage.setItem("users", JSON.stringify(users));
 
     alert("Регистрация успешна");
     navigate("/login");
