@@ -6,6 +6,7 @@ import icon from "../../assets/logo.png";
 import { useState } from "react";
 import { BiHide, BiShow } from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
+import { hashPassword } from "../../utils/hashPassword";
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export const LoginForm = () => {
     formState: { errors },
   } = useForm();
 
-  const submitHandle = (data) => {
+  const submitHandle = async (data) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
 
     const user = users.find((u) => u.email === data.email);
@@ -30,11 +31,13 @@ export const LoginForm = () => {
       return;
     }
 
-    if (user.password === data.password) {
+    const hashedPassword = await hashPassword(data.password);
+
+    if (user.password === hashedPassword) {
       localStorage.setItem("isAuth", "true");
 
       localStorage.setItem("currentUser", JSON.stringify(user));
-      
+
       navigate("/board");
     } else {
       alert("Неверный email или пароль");
@@ -87,7 +90,7 @@ export const LoginForm = () => {
           endAdornment={
             <ShowPasswordButton
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setShowPassword((prev) => !prev)}
             >
               {showPassword ? <BiHide /> : <BiShow />}
             </ShowPasswordButton>

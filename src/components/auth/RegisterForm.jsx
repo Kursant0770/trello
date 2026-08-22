@@ -5,11 +5,11 @@ import icon from "../../assets/logo.png";
 import { useState } from "react";
 import { BiHide, BiShow } from "react-icons/bi";
 import { useNavigate, Link } from "react-router-dom";
+import { hashPassword } from "../../utils/hashPassword";
 
 export const RegisterForm = () => {
   const navigate = useNavigate();
   const [passVisible, setPassVisible] = useState(false);
-  const [confirmVisible, setConfirmVisible] = useState(false);
 
   const {
     handleSubmit,
@@ -23,14 +23,17 @@ export const RegisterForm = () => {
     name: "password",
   });
 
-  const submitHandle = (data) => {
+  const submitHandle = async (data) => {
     const { confirmPassword: _confirmPassword, ...userData } = data;
+
     const users = JSON.parse(localStorage.getItem("users")) || [];
 
     if (users.some((user) => user.email === userData.email)) {
       alert("Пользователь с таким email уже существует");
       return;
     }
+
+    userData.password = await hashPassword(userData.password);
 
     users.push(userData);
     localStorage.setItem("users", JSON.stringify(users));
@@ -56,6 +59,7 @@ export const RegisterForm = () => {
         <InputMUI
           label="Имя"
           name="name"
+          autoComplete="name"
           register={register}
           rules={{
             required: "Введите ваше имя",
@@ -73,6 +77,7 @@ export const RegisterForm = () => {
           label="Email"
           type="email"
           name="email"
+          autoComplete="email"
           register={register}
           rules={{
             required: "Введите email",
@@ -89,6 +94,7 @@ export const RegisterForm = () => {
           label="Пароль"
           type={passVisible ? "text" : "password"}
           name="password"
+          autoComplete="new-password"
           register={register}
           rules={{
             required: "Введите пароль",
@@ -99,7 +105,7 @@ export const RegisterForm = () => {
           endAdornment={
             <IconButton
               type="button"
-              onClick={() => setPassVisible(!passVisible)}
+              onClick={() => setPassVisible((prev) => !prev)}
             >
               {passVisible ? <BiHide /> : <BiShow />}
             </IconButton>
@@ -108,8 +114,9 @@ export const RegisterForm = () => {
 
         <InputMUI
           label="Подтвердите пароль"
-          type={confirmVisible ? "text" : "password"}
+          type={passVisible ? "text" : "password"}
           name="confirmPassword"
+          autoComplete="new-password"
           register={register}
           rules={{
             required: "Повторите пароль",
@@ -120,9 +127,9 @@ export const RegisterForm = () => {
           endAdornment={
             <IconButton
               type="button"
-              onClick={() => setConfirmVisible(!confirmVisible)}
+              onClick={() => setPassVisible((prev) => !prev)}
             >
-              {confirmVisible ? <BiHide /> : <BiShow />}
+              {passVisible ? <BiHide /> : <BiShow />}
             </IconButton>
           }
         />
