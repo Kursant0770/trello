@@ -12,6 +12,3 @@ export const Layout = () => {
     </div>
   );
 };
-
-
-
