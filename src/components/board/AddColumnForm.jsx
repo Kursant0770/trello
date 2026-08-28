@@ -8,12 +8,14 @@ export const AddColumnForm = ({ setClose, onAdd }) => {
   const [title, setTitle] = useState("");
 
   const handleSubmit = (e) => {
-    e?.preventDefault();
-    if (title.trim()) {
-      onAdd(title);
-      setTitle("");
-      setClose();
-    }
+    e.preventDefault();
+
+    const trimmedTitle = title.trim();
+
+    if (!trimmedTitle) return;
+
+    onAdd(trimmedTitle);
+    setTitle("");
   };
 
   return (
@@ -22,7 +24,6 @@ export const AddColumnForm = ({ setClose, onAdd }) => {
         name="title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
         placeholder="Ввести заголовок списка"
         autoFocus
       />
@@ -41,9 +42,9 @@ const FormWrapper = styled.form`
   width: 272px;
   padding: 12px;
 
-  background-color: #101204; 
+  background-color: #101204;
   border-radius: 12px;
-  
+
   display: flex;
   flex-direction: column;
 `;
@@ -53,7 +54,7 @@ const StyledInput = styled(Input)`
   color: #ffffff;
   border: 1px solid #3e3f42;
   border-radius: 4px;
-  
+
   width: 100%;
   height: 36px;
   padding: 0 12px;
@@ -76,7 +77,7 @@ const StyledAddButton = styled(Button)`
   background: #0c66e4;
   font-size: 14px;
   font-weight: 500;
-  
+
   border: none;
   border-radius: 4px;
   padding: 6px 12px;
@@ -95,7 +96,7 @@ const StyledBackButton = styled.button`
   background: transparent;
   font-size: 24px;
   cursor: pointer;
-  
+
   border: none;
   display: flex;
   align-items: center;
