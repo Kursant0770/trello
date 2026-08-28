@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { IoMdAdd } from "react-icons/io";
 import { AddCardForm } from "./AddCardForm";
@@ -6,8 +6,7 @@ import { Card } from "./Card";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
-import { BiDotsHorizontalRounded } from "react-icons/bi";
-import { IconButton, Menu, MenuItem, Box } from "@mui/material";
+import { ColumnMenu } from "./ColumnMenu";
 
 export const Column = ({
   columnId,
@@ -21,6 +20,8 @@ export const Column = ({
   onUpdateTitle,
   onDeleteColumn,
   onClearColumn,
+  onAddComment,
+  onDeleteComment,
   onUpdateBg,
   isFormOpen,
   onOpen,
@@ -28,16 +29,6 @@ export const Column = ({
 }) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [tempTitle, setTempTitle] = useState(title);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleAddCard = (text) => {
     onAddCard(text);
@@ -45,13 +36,20 @@ export const Column = ({
   };
 
   const handleTitleSubmit = () => {
+    const trimmedTitle = tempTitle.trim();
+
     setIsEditingTitle(false);
-    if (tempTitle.trim() && tempTitle !== title) {
-      onUpdateTitle(tempTitle);
+
+    if (trimmedTitle && trimmedTitle !== title) {
+      onUpdateTitle(trimmedTitle);
     } else {
       setTempTitle(title);
     }
   };
+
+  useEffect(() => {
+    setTempTitle(title);
+  }, [title]);
 
   return (
     <Draggable draggableId={columnId.toString()} index={index}>
@@ -78,68 +76,21 @@ export const Column = ({
               </StyledHeaderH3>
             )}
 
-            <IconButton onClick={handleClick}>
-              <BiDotsHorizontalRounded />
-            </IconButton>
-
-            <Menu
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              disableScrollLock
-              PaperProps={{
-                style: {
-                  background: "#282e33",
-                  color: "#b6c2cf",
-                  width: "200px",
-                },
-              }}
-            >
-              <MenuItem
-                onClick={() => {
-                  onClearColumn(columnId);
-                  handleClose();
-                }}
-              >
-                Очистить список
-              </MenuItem>
-
-              <MenuItem
-                onClick={() => {
-                  onDeleteColumn(columnId);
-                  handleClose();
-                }}
-                sx={{ color: "#ef5350" }}
-              >
-                Удалить колонку
-              </MenuItem>
-              <Box sx={{ display: "flex", gap: 1, p: 1, flexWrap: "wrap" }}>
-                {["#101204", "#1f3e5c", "#898921", "#521a1a", "#1d441d"].map(
-                  (color) => (
-                    <Box
-                      key={color}
-                      onClick={() => onUpdateBg(columnId, color)}
-                      sx={{
-                        width: 24,
-                        height: 24,
-                        bgcolor: color,
-                        cursor: "pointer",
-                        border: "1px solid #fff",
-                        borderRadius: "4px",
-                      }}
-                    />
-                  ),
-                )}
-              </Box>
-            </Menu>
+            <ColumnMenu
+              columnId={columnId}
+              onClearColumn={onClearColumn}
+              onDeleteColumn={onDeleteColumn}
+              onUpdateBg={onUpdateBg}
+            />
           </Header>
+
           <Droppable droppableId={columnId.toString()} type="card">
             {(provided) => (
               <CardsContainer
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                {cards?.map((card, index) => (
+                {cards.map((card, index) => (
                   <Card
                     key={card.id}
                     index={index}
@@ -147,6 +98,8 @@ export const Column = ({
                     columnId={columnId}
                     onUpdateCard={onUpdateCard}
                     onDeleteCard={onDeleteCard}
+                    onAddComment={onAddComment}
+                    onDeleteComment={onDeleteComment}
                   />
                 ))}
                 {provided.placeholder}
@@ -189,21 +142,6 @@ const Header = styled.div`
 
   display: flex;
   justify-content: space-between;
-
-  button {
-    border: none;
-    cursor: pointer;
-    background: transparent !important;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.1) !important;
-    }
-  }
 `;
 
 const StyledHeaderH3 = styled.h3`
