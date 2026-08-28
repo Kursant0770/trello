@@ -19,14 +19,19 @@ export const LoginForm = () => {
   } = useForm();
 
   const submitHandle = async (data) => {
-    const result = await loginUser(data.email, data.password);
+    try {
+      const result = await loginUser(data.email, data.password);
 
-    if (!result.success) {
-      alert(result.message);
-      return;
+      if (!result.success) {
+        alert(result.message);
+        return;
+      }
+
+      navigate("/board");
+    } catch (error) {
+      console.error("Ошибка входа:", error);
+      alert("Не удалось выполнить вход");
     }
-
-    navigate("/board");
   };
 
   return (
