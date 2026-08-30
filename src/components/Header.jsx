@@ -6,9 +6,10 @@ import AccountMenu from "./AccountMenu";
 export const Header = () => {
   return (
     <StyledHeader>
-      <NavLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+      <NavLink to="/" className="logo">
         <h1>
-          <FaTrello /> Trello
+          <FaTrello />
+          <span>Trello</span>
         </h1>
       </NavLink>
 
@@ -25,36 +26,80 @@ export const Header = () => {
 const StyledHeader = styled.header`
   position: fixed;
   top: 0;
+  left: 0;
   z-index: 1000;
 
   width: 100%;
+  min-height: 64px;
+
   background: #1f1f21;
   color: white;
+
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 14px;
+
+  padding: 10px 24px;
+
+  .logo {
+    color: inherit;
+    text-decoration: none;
+  }
 
   h1 {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
+    font-size: 28px;
   }
 
   a.active {
-    color: #007bff; 
+    color: #007bff;
     font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 16px;
+
+    h1 {
+      font-size: 24px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 12px;
+
+    h1 {
+      font-size: 20px;
+      gap: 6px;
+    }
   }
 `;
 
 const StyledNav = styled.nav`
   display: flex;
   align-items: center;
-  margin: 0 2rem;
-  gap: 5vw;
+  gap: 32px;
 
   a {
     text-decoration: none;
     color: white;
-    font-size: 24px;
+    font-size: 20px;
+  }
+
+  @media (max-width: 768px) {
+    gap: 18px;
+
+    a {
+      font-size: 18px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    gap: 10px;
+
+    a {
+      font-size: 16px;
+    }
   }
 `;

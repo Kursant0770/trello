@@ -7,31 +7,41 @@ import { Draggable } from "@hello-pangea/dnd";
 import { AiOutlineDelete } from "react-icons/ai";
 import { Checkbox } from "@mui/material";
 import { MdRadioButtonUnchecked, MdCheckCircle } from "react-icons/md";
+import { getCurrentUser } from "../../utils/userStorage";
 
-export const Card = ({ card, columnId, onUpdateCard, index, onDeleteCard }) => {
+export const Card = ({
+  card,
+  columnId,
+  onUpdateCard,
+  index,
+  onDeleteCard,
+  onAddComment,
+  onDeleteComment,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
 
-  const user = JSON.parse(localStorage.getItem("currentUser")) || {
-    name: "Guest",
-  };
+  const user = getCurrentUser();
 
   const saveUpdates = (updates) => {
     onUpdateCard(columnId, card.id, updates);
   };
 
   const handleAddComment = () => {
-    if (commentText.trim()) {
-      const newComment = {
-        id: crypto.randomUUID(),
-        userName: user.name,
-        text: commentText,
-        date: new Date().toLocaleString(),
-      };
+    const text = commentText.trim();
 
-      saveUpdates({ comments: [...(card.comments || []), newComment] });
-      setCommentText("");
-    }
+    if (!text) return;
+
+    const newComment = {
+      id: crypto.randomUUID(),
+      userName: user.name,
+      text,
+      date: new Date().toLocaleString(),
+    };
+
+    onAddComment(columnId, card.id, newComment);
+
+    setCommentText("");
   };
 
   const handleToggleChecked = (e) => {
@@ -40,65 +50,58 @@ export const Card = ({ card, columnId, onUpdateCard, index, onDeleteCard }) => {
   };
 
   const handleDeleteComment = (commentId) => {
-    const filtered = card.comments.filter((c) => c.id !== commentId);
-    saveUpdates({ comments: filtered });
+    onDeleteComment(columnId, card.id, commentId);
   };
 
   const handleDeleteCard = (e) => {
     e.stopPropagation();
-
-    if (onDeleteCard) {
-      onDeleteCard(columnId, card.id);
-    }
+    onDeleteCard(columnId, card.id);
   };
 
   return (
     <>
       <Draggable draggableId={card.id.toString()} index={index}>
-      {(provided) => (
-        <StyledCard
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          onClick={() => setIsModalOpen(true)}
-        >
-          <CardContent>
-            <Checkbox
-              checked={!!card.completed}
-              onChange={handleToggleChecked}
-              onClick={(e) => e.stopPropagation()}
-              icon={<MdRadioButtonUnchecked size={22} color="#b6c2cf" />} 
-              checkedIcon={<MdCheckCircle size={22} color="#4caf50" />}
-              sx={{ p: 0 }}
-            />
+        {(provided) => (
+          <StyledCard
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            onClick={() => setIsModalOpen(true)}
+          >
+            <CardContent>
+              <Checkbox
+                checked={card.completed}
+                onChange={handleToggleChecked}
+                onClick={(e) => e.stopPropagation()}
+                icon={<MdRadioButtonUnchecked size={22} color="#b6c2cf" />}
+                checkedIcon={<MdCheckCircle size={22} color="#4caf50" />}
+              />
 
-            <CardText $done={card.completed}>{card.text}</CardText>
+              <CardText $done={card.completed}>{card.text}</CardText>
 
-            {card.completed && (
-              <DeleteIconButton onClick={handleDeleteCard}>
-                <AiOutlineDelete size={18} />
-              </DeleteIconButton>
-            )}
-          </CardContent>
-        </StyledCard>
-      )}
-    </Draggable>
+              {card.completed && (
+                <DeleteIconButton onClick={handleDeleteCard}>
+                  <AiOutlineDelete size={18} />
+                </DeleteIconButton>
+              )}
+            </CardContent>
+          </StyledCard>
+        )}
+      </Draggable>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ModalContent onClick={(e) => e.stopPropagation()}>
-          <TitleSection>
-            <StyledTitleInput
-              value={card.text}
-              onChange={(e) => saveUpdates({ text: e.target.value })}
-            />
-          </TitleSection>
+          <StyledTitleInput
+            value={card.text}
+            onChange={(e) => saveUpdates({ text: e.target.value })}
+          />
 
           <Section>
             <h4>Описание</h4>
             <StyledInput
               as="textarea"
               placeholder="Добавить описание..."
-              value={card.description || ""}
+              value={card.description}
               onChange={(e) => saveUpdates({ description: e.target.value })}
             />
           </Section>
@@ -113,11 +116,11 @@ export const Card = ({ card, columnId, onUpdateCard, index, onDeleteCard }) => {
             <StyledButton onClick={handleAddComment}>Сохранить</StyledButton>
 
             <CommentsList>
-              {card.comments?.map((c) => (
-                <StyledCommentBox key={c.id}>
-                  <strong style={{ color: "#007bff" }}>{c.userName}</strong>
-                  <p>{c.text}</p>
-                  <DeleteText onClick={() => handleDeleteComment(c.id)}>
+              {card.comments.map((comment) => (
+                <StyledCommentBox key={comment.id}>
+                  <CommentUser>{comment.userName}</CommentUser>
+                  <p>{comment.text}</p>
+                  <DeleteText onClick={() => handleDeleteComment(comment.id)}>
                     Удалить
                   </DeleteText>
                 </StyledCommentBox>
@@ -151,7 +154,7 @@ const DeleteIconButton = styled.div`
   color: #ef5350;
   border-radius: 4px;
   transition: 0.2s;
-  
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -182,26 +185,10 @@ const StyledTitleInput = styled(Input)`
 
 const ModalContent = styled.div`
   padding: 10px 20px;
-  
+
   display: flex;
   flex-direction: column;
   gap: 20px;
-`;
-
-const TitleSection = styled.div`
-  h2 {
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-
-    padding: 4px 8px;
-    margin: 0;
-    border-radius: 4px;
-
-    &:hover {
-      background: #ffffff1a;
-    }
-  }
 `;
 
 const Section = styled.section`
@@ -248,11 +235,6 @@ const StyledCommentBox = styled.div`
   color: white;
   border-radius: 8px;
 
-  strong {
-    font-size: 13px;
-    color: #b6c2cf;
-  }
-
   p {
     margin: 5px 0;
     font-size: 14px;
@@ -261,12 +243,14 @@ const StyledCommentBox = styled.div`
 
 const DeleteText = styled.span`
   font-size: 11px;
-  color: #cecfd2;
+  color: #ef5350;
   text-decoration: underline;
   cursor: pointer;
 
-  &:hover {
-    color: #ef5350;
+  &:hover,
+  &:active,
+  &:focus {
+    color: #e77c7c;
   }
 `;
 
@@ -297,15 +281,14 @@ const CommentsList = styled.div`
 const StyledButton = styled(Button)`
   padding: 8px 16px;
   margin-top: 10px;
-  
+
   color: black;
   background: #2668ca;
   font-size: 14px;
   cursor: pointer;
-  
+
   border: none;
   border-radius: 4px;
-
 
   &:hover {
     background-color: #3b7ad9;
@@ -313,7 +296,7 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledCard = styled.div`
-  padding: 8px 12px;
+  padding: 4px 12px;
   margin-bottom: 8px;
 
   background: #22272b;
@@ -328,4 +311,9 @@ const StyledCard = styled.div`
   &:hover {
     border: 1px solid #85b8ff;
   }
+`;
+
+const CommentUser = styled.strong`
+  color: #007bff;
+  font-size: 13px;
 `;
